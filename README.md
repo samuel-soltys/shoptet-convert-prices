@@ -1,3 +1,3 @@
-# Shoptet script
+# Shoptet Convert Prices
 
-Login into shoptet and then rewrite it
+This project is a simple Selenium script to bulkly convert prices of all products to other currency. Particularly from EUR to CZK with 24.415 exchange rate.   
