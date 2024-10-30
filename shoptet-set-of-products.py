@@ -14,7 +14,7 @@ email = str(os.environ['EMAIL'])
 passw = str(os.environ['PASSWORD'])
 
 # Webdriver setup
-driver = webdriver.Chrome(ChromeDriverManager().install())
+driver = webdriver.Chrome("/opt/homebrew/bin/chromedriver") #
 driver.get("https://organic-oasis.sk/admin/")
 time.sleep(0.5)
 
@@ -31,11 +31,13 @@ products = {
     "PROBIOWOMANTHERAPY": 39,
     "PROBIOKIDSTHERAPY": 33,
     "HAPPYSKINTHERAPY": 36,
-    "LOVELYHAIRTHERAPY": 45
+    "LOVELYHAIRTHERAPY": 45,
+    "PROBIODETOXTHERAPY": 45,
+    "FINEBODYTHERAPY": 65
 }
 
-for page in range(1, 6):
-    driver.get(f"https://www.organic-oasis.sk/admin/ceny/?f%5BproductName%5D=vyber+si&from={page}") # product
+for page in range(1, 12):
+    driver.get(f"https://www.organic-oasis.sk/admin/ceny/?f%5BpricelistId%5D=1&f%5BproductName%5D=DECEMBER+COMBO&from={page}") # product
 
     # Changing the price column = 6 is for the price column and 8 is for the standard price column
     for row in range(1, 51):
@@ -43,7 +45,7 @@ for page in range(1, 6):
             names_row = 4
 
             names = driver.find_element(By.XPATH, f'//*[@id="css"]/body/div[1]/div[2]/div[1]/form/fieldset/div[2]/table/tbody/tr[{row}]/td[{names_row}]/a/span/span[1]/span')
-            # get text from <span> tag and remove unnecessary characters
+            # Get info about the products of variant from <span> tag and remove unnecessary characters
             names = names.text
             names = names.replace("Prvý produkt:", "")
             names = names.replace("Druhý produkt:", "")
@@ -51,23 +53,23 @@ for page in range(1, 6):
             names = names.replace("\n", "")
             names = names.replace(" ", "")
             
-            # split the product names into a list
+            # Split the product names into a list
             names = names.split(",")
 
-            # search for the price and standard price input fields and clear them
+            # Search for the price and standard price input fields and clear them
             price = driver.find_element(By.XPATH, f'/html/body/div[1]/div[2]/div[1]/form/fieldset/div[2]/table/tbody/tr[{row}]/td[6]/div/div/input')
             price.clear()
             
             standard_price = driver.find_element(By.XPATH, f'/html/body/div[1]/div[2]/div[1]/form/fieldset/div[2]/table/tbody/tr[{row}]/td[8]/div/div/input')
             standard_price.clear()
 
-            # getting the price of each product from products dictionary
+            # Getting the price of each product from products dictionary
             sum_price = 0
             for name in names:
                 sum_price += products[name]
             discount_price = round(sum_price * 0.8, 2)
 
-            # enter the price and standard price into the input fields
+            # Enter the price and standard price into the input fields
             price.send_keys(discount_price)
             standard_price.send_keys(sum_price)
 
@@ -75,10 +77,10 @@ for page in range(1, 6):
             pass
     
     # Time to save and check the changes in Shoptet admin
-    time.sleep(10)
+    time.sleep(6)
 
     # setting the stock of the products to 100
-    driver.get(f"https://www.organic-oasis.sk/admin/sklad/?f%5BproductName%5D=vyber+si&from={page}") # stock 
+    driver.get(f"https://www.organic-oasis.sk/admin/sklad/?f%5BpricelistId%5D=1&f%5BproductName%5D=DECEMBER+COMBO&from={page}") # stock 
 
     for row in range(1, 51):
         try:
@@ -89,8 +91,8 @@ for page in range(1, 6):
 
         except NoSuchElementException:
             pass
+    
+    # Time to save and check the changes in Shoptet admin
+    time.sleep(6)
 
-
-# Time to save and check the changes in Shoptet admin
-time.sleep(10)
 driver.quit()
