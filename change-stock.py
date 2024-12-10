@@ -19,7 +19,7 @@ chrome_options.add_argument("--disable-extensions")
 # chrome_options.add_argument("--headless=new")
 
 driver = webdriver.Chrome("/opt/homebrew/bin/chromedriver", options=chrome_options) #
-driver.get("https://organic-oasis.cz/admin/")
+driver.get("https://organic-oasis.sk/admin/")
 time.sleep(0.5)
 
 # Entering the login credentials
@@ -40,8 +40,8 @@ codes = {
     "FINEBODYTHERAPY": "1180"
 }
 
-driver.get(f"https://www.organic-oasis.cz/admin/produkty-detail/?id=489") # product
-time.sleep(10)
+driver.get(f"https://www.organic-oasis.sk/admin/produkty-detail/?id=1034") # product
+time.sleep(5)
 
 # Changing the price column = 6 is for the price column and 8 is for the standard price column
 for row in range(1, 513):
@@ -49,8 +49,12 @@ for row in range(1, 513):
     names = driver.find_element(By.XPATH, f'//*[@id="variant-product"]/div[2]/table/tbody/tr[{row}]/td[1]/a')
     names = names.text.replace(" ", "").split(",")
 
-    if "PROBIOWOMANTHERAPY" in names:
-        availability = driver.find_element(By.XPATH, f'//*[@id="variant-product"]/div[2]/table/tbody/tr[{row}]/td[7]/div/div/select')
-        select = Select(availability)
-        select.select_by_value("6") # 110
+    if "FINEBODYTHERAPY" in names:
+        stock = driver.find_element(By.XPATH, f'//*[@id="variant-product"]/div[2]/table/tbody/tr[{row}]/td[6]/div/div/input')
+        stock.clear()
+        stock.send_keys(0)
+        
+        # availability = driver.find_element(By.XPATH, f'//*[@id="variant-product"]/div[2]/table/tbody/tr[{row}]/td[7]/div/div/select')
+        # select = Select(availability)
+        # select.select_by_value("-2") # 110
 time.sleep(1000)
